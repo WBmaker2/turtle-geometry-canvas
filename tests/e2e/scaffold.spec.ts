@@ -84,3 +84,37 @@ test('runs square challenge and paints segment pixels', async ({ page }) => {
     )
     .toBeGreaterThan(beforePixels + 300);
 });
+
+test('applies selected pen color before drawing the loaded challenge', async ({
+  page,
+}) => {
+  await page.goto('/');
+
+  const canvas = page.getByTestId('turtle-canvas');
+  await page.getByRole('button', { name: '정사각형 불러오기' }).click();
+  await page.locator('#pen-color').fill('#d94f30');
+  await page.getByRole('button', { name: '색상 적용' }).click();
+
+  const beforePixels = await countSegmentColorPixels(canvas, {
+    r: 217,
+    g: 79,
+    b: 48,
+    a: 255,
+  });
+
+  await page.getByRole('button', { name: '실행' }).click();
+  await expect(page.getByRole('status')).toContainText('선분 4개');
+
+  await expect
+    .poll(
+      () =>
+        countSegmentColorPixels(canvas, {
+          r: 217,
+          g: 79,
+          b: 48,
+          a: 255,
+        }),
+      { timeout: 7000 },
+    )
+    .toBeGreaterThan(beforePixels + 300);
+});

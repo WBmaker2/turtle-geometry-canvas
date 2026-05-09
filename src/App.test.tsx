@@ -25,7 +25,7 @@ describe('App', () => {
     expect(screen.getByLabelText('정다각형 수학 공식')).toHaveTextContent(/외각\s*90도/);
   });
 
-  it('adds a color command when 색상 적용 is clicked', async () => {
+  it('places the color command before drawing commands when 색상 적용 is clicked', async () => {
     const user = userEvent.setup();
 
     render(<App />);
@@ -33,11 +33,18 @@ describe('App', () => {
     const commandList = screen.getByRole('list', { name: '현재 블록 목록' });
     const before = commandList.querySelectorAll('li').length;
 
+    fireEvent.change(screen.getByLabelText('펜 색상'), {
+      target: { value: '#d94f30' },
+    });
     await user.click(screen.getByRole('button', { name: '색상 적용' }));
     const after = commandList.querySelectorAll('li').length;
 
     expect(after).toBe(before + 1);
-    const colorInput = within(commandList).getByDisplayValue('#1f7a5c');
+    const commandItems = within(commandList).getAllByRole('listitem');
+    expect(commandItems[0]).toHaveTextContent('펜 색상');
+    expect(commandItems[1]).toHaveTextContent('반복');
+
+    const colorInput = within(commandList).getByDisplayValue('#d94f30');
     expect(colorInput).toHaveAttribute('type', 'color');
   });
 

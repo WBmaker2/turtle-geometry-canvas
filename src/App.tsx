@@ -132,7 +132,17 @@ export default function App() {
   };
 
   const applyColor = (color: string) => {
-    setBlocks((prev) => [...prev, { id: crypto.randomUUID(), kind: 'penColor', color }]);
+    setBlocks((prev) => {
+      const existingColorBlock = prev.find((block) => block.kind === 'penColor');
+      const colorBlock: ProgramBlock = existingColorBlock
+        ? { ...existingColorBlock, color }
+        : { id: crypto.randomUUID(), kind: 'penColor', color };
+
+      return [
+        colorBlock,
+        ...prev.filter((block) => block.kind !== 'penColor'),
+      ];
+    });
   };
 
   const updateBlock = (blockId: string, patch: ProgramBlockPatch) => {
