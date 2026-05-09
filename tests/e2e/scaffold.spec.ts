@@ -48,7 +48,7 @@ async function countSegmentColorPixels(
   );
 }
 
-test('renders the turtle geometry canvas', async ({ page }) => {
+test('runs square challenge and paints segment pixels', async ({ page }) => {
   await page.goto('/');
 
   await expect(
