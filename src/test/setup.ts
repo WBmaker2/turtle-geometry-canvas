@@ -7,6 +7,8 @@ type MockCanvasContext = {
   beginPath: ReturnType<typeof vi.fn>;
   moveTo: ReturnType<typeof vi.fn>;
   lineTo: ReturnType<typeof vi.fn>;
+  ellipse: ReturnType<typeof vi.fn>;
+  arc: ReturnType<typeof vi.fn>;
   stroke: ReturnType<typeof vi.fn>;
   save: ReturnType<typeof vi.fn>;
   translate: ReturnType<typeof vi.fn>;
@@ -31,6 +33,8 @@ function createMockCanvasContext(): MockCanvasContext {
     beginPath: vi.fn(),
     moveTo: vi.fn(),
     lineTo: vi.fn(),
+    ellipse: vi.fn(),
+    arc: vi.fn(),
     stroke: vi.fn(),
     save: vi.fn(),
     translate: vi.fn(),

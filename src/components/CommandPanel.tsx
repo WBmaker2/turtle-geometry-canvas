@@ -27,6 +27,9 @@ type CommandPanelProps = {
     direction: 'left' | 'right',
   ) => void;
   onSetColor: (color: string) => void;
+  drawingSpeed: number;
+  speedOptions: readonly number[];
+  onSetDrawingSpeed: (speed: number) => void;
   onRun: () => void;
   onSavePng: () => void;
   onReset: () => void;
@@ -54,6 +57,10 @@ function getBlockTitle(blockKind: ProgramBlock['kind']) {
   return '펜 색상';
 }
 
+function formatSpeed(speed: number) {
+  return `${speed}배`;
+}
+
 export function CommandPanel({
   blocks,
   challenges,
@@ -63,6 +70,9 @@ export function CommandPanel({
   onAddTurn,
   onAddRepeat,
   onSetColor,
+  drawingSpeed,
+  speedOptions,
+  onSetDrawingSpeed,
   onRun,
   onSavePng,
   onReset,
@@ -78,6 +88,10 @@ export function CommandPanel({
   const [newRepeatTurnDegrees, setNewRepeatTurnDegrees] = useState(120);
   const [newRepeatDirection, setNewRepeatDirection] = useState<'left' | 'right'>(
     'right',
+  );
+  const selectedSpeedIndex = Math.max(
+    0,
+    speedOptions.findIndex((speed) => speed === drawingSpeed),
   );
 
   const handleNumberPatch = (
@@ -434,6 +448,33 @@ export function CommandPanel({
               반복 추가
             </button>
           </div>
+        </div>
+      </section>
+
+      <section className="panel-section">
+        <h2>그리기 속도</h2>
+        <label className="speed-control" htmlFor="drawing-speed">
+          <span>현재 속도</span>
+          <strong>{formatSpeed(drawingSpeed)}</strong>
+        </label>
+        <input
+          id="drawing-speed"
+          className="speed-slider"
+          type="range"
+          min={0}
+          max={speedOptions.length - 1}
+          step={1}
+          value={selectedSpeedIndex}
+          aria-label="그리기 속도"
+          aria-valuetext={formatSpeed(drawingSpeed)}
+          onChange={(event) =>
+            onSetDrawingSpeed(speedOptions[Number(event.currentTarget.value)])
+          }
+        />
+        <div className="speed-labels" aria-hidden="true">
+          {speedOptions.map((speed) => (
+            <span key={speed}>{formatSpeed(speed)}</span>
+          ))}
         </div>
       </section>
 

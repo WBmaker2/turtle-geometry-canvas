@@ -12,6 +12,8 @@ import { challenges, type Challenge } from './data/challenges';
 import type { ProgramBlock } from './domain/blocks';
 import './App.css';
 
+const DRAWING_SPEEDS = [0.25, 0.5, 1, 2, 4, 8] as const;
+
 function getInitialSquareChallenge(challenges: Challenge[]) {
   return challenges.find(({ id }) => id === 'square') ?? challenges[0];
 }
@@ -45,6 +47,7 @@ export default function App() {
     cloneBlocks(initialChallenge.blocks),
   );
   const [executedBlocks, setExecutedBlocks] = useState<ProgramBlock[]>([]);
+  const [drawingSpeed, setDrawingSpeed] = useState<number>(1);
 
   const selectedChallenge = useMemo(
     () =>
@@ -54,7 +57,14 @@ export default function App() {
     [selectedChallengeId],
   );
 
-  const programResult = runTurtleProgram(expandBlocks(executedBlocks));
+  const expandedCommands = useMemo(
+    () => expandBlocks(executedBlocks),
+    [executedBlocks],
+  );
+  const programResult = useMemo(
+    () => runTurtleProgram(expandedCommands),
+    [expandedCommands],
+  );
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const regularFacts =
@@ -245,6 +255,9 @@ export default function App() {
         onAddTurn={addTurnBlock}
         onAddRepeat={addRepeatBlock}
         onSetColor={applyColor}
+        drawingSpeed={drawingSpeed}
+        speedOptions={DRAWING_SPEEDS}
+        onSetDrawingSpeed={setDrawingSpeed}
         onRun={() => setExecutedBlocks(cloneBlocks(blocks))}
         onSavePng={saveCanvasAsPng}
         onReset={() => setExecutedBlocks([])}
@@ -260,6 +273,7 @@ export default function App() {
           <TurtleCanvas
             segments={programResult.segments}
             turtle={programResult.finalState}
+            animationSpeed={drawingSpeed}
             canvasRef={canvasRef}
           />
         </section>

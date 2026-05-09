@@ -233,6 +233,34 @@ button svg {
   grid-column: 1 / -1;
 }
 
+.speed-control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+  color: #1f3a34;
+}
+
+.speed-control strong {
+  color: #1f7a5c;
+}
+
+.speed-slider {
+  width: 100%;
+  accent-color: #1f7a5c;
+}
+
+.speed-labels {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 4px;
+  margin-top: 4px;
+  color: #526b62;
+  font-size: 0.72rem;
+  text-align: center;
+}
+
 .command-row:last-child {
   border-bottom: 0;
 }

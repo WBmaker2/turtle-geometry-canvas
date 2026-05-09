@@ -41,6 +41,19 @@ describe('App', () => {
     expect(colorInput).toHaveAttribute('type', 'color');
   });
 
+  it('lets students choose one of the fixed drawing speeds', () => {
+    render(<App />);
+
+    const speedSlider = screen.getByRole('slider', { name: '그리기 속도' });
+    expect(speedSlider).toHaveAttribute('aria-valuetext', '1배');
+
+    fireEvent.change(speedSlider, { target: { value: '5' } });
+
+    expect(speedSlider).toHaveValue('5');
+    expect(speedSlider).toHaveAttribute('aria-valuetext', '8배');
+    expect(screen.getAllByText('8배').length).toBeGreaterThan(0);
+  });
+
   it('keeps previous result until run is clicked again after command edits', async () => {
     const user = userEvent.setup();
 

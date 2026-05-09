@@ -71,12 +71,16 @@ test('runs square challenge and paints segment pixels', async ({ page }) => {
 
   await expect(canvas).toBeVisible();
 
-  const afterPixels = await countSegmentColorPixels(canvas, {
-    r: 31,
-    g: 122,
-    b: 92,
-    a: 255,
-  });
-
-  expect(afterPixels).toBeGreaterThan(beforePixels + 300);
+  await expect
+    .poll(
+      () =>
+        countSegmentColorPixels(canvas, {
+          r: 31,
+          g: 122,
+          b: 92,
+          a: 255,
+        }),
+      { timeout: 7000 },
+    )
+    .toBeGreaterThan(beforePixels + 300);
 });

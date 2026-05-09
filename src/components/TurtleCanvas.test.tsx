@@ -23,12 +23,13 @@ describe('TurtleCanvas', () => {
       penColor: '#1f7a5c',
     };
 
-    render(<TurtleCanvas segments={segments} turtle={turtle} />);
+    render(<TurtleCanvas segments={segments} turtle={turtle} animate={false} />);
 
     const canvas = screen.getByTestId('turtle-canvas');
     expect(canvas).toBeInTheDocument();
     expect(HTMLCanvasElement.prototype.getContext).toHaveBeenCalled();
 
     expect(contextMock.lineTo).toHaveBeenCalledWith(760 / 2 + 20, 560 / 2 + 15);
+    expect(contextMock.ellipse).toHaveBeenCalled();
   });
 });
