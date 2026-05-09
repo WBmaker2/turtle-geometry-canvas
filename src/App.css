@@ -1,0 +1,44 @@
+.app-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(300px, 380px) 1fr;
+  gap: 16px;
+  padding: 16px;
+}
+
+.control-panel,
+.canvas-stage {
+  border: 1px solid #c8d8d0;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.control-panel h1 {
+  margin: 0 0 8px;
+  font-size: 1.5rem;
+}
+
+.control-panel p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.canvas-stage {
+  display: grid;
+  min-height: 520px;
+}
+
+.canvas-placeholder {
+  display: grid;
+  place-items: center;
+  border: 1px dashed #9ab7aa;
+  border-radius: 8px;
+  color: #48665b;
+}
+
+@media (max-width: 840px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+}
