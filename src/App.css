@@ -213,10 +213,47 @@ button svg {
 @media (max-width: 840px) {
   .app-shell {
     grid-template-columns: 1fr;
+    padding: 10px;
+    overflow-x: hidden;
+  }
+
+  .workspace {
+    grid-template-rows: auto auto;
   }
 
   .button-row,
   .action-row {
+    align-items: stretch;
+  }
+
+  .button-row button,
+  .action-row button {
+    width: 100%;
+  }
+
+  .app-shell,
+  .canvas-stage,
+  .workspace,
+  .control-panel,
+  .result-panel,
+  .lesson-panel,
+  .reflection-panel {
+    overflow-x: hidden;
+  }
+
+  .workspace {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .turtle-canvas {
+    max-width: 100%;
+    max-height: 52vh;
+  }
+
+  .button-row,
+  .action-row {
+    gap: 6px;
     grid-template-columns: 1fr;
   }
 }
