@@ -37,6 +37,15 @@
   color: #48665b;
 }
 
+.turtle-canvas {
+  width: 100%;
+  aspect-ratio: 19 / 14;
+  max-height: calc(100vh - 48px);
+  border: 1px solid #b8cdc4;
+  border-radius: 8px;
+  background: #fbfdfb;
+}
+
 @media (max-width: 840px) {
   .app-shell {
     grid-template-columns: 1fr;
