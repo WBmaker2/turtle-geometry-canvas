@@ -1,12 +1,9 @@
 import { useState } from 'react';
 import {
-  Download,
   MoveRight,
   PencilLine,
-  Play,
   RotateCcw,
   Repeat,
-  Trash2,
 } from 'lucide-react';
 
 import type { ProgramBlock, ProgramBlockPatch } from '../domain/blocks';
@@ -25,18 +22,8 @@ type CommandPanelProps = {
     turnDegrees: number,
     direction: 'left' | 'right',
   ) => void;
-  onSetColor: (color: string) => void;
-  drawingSpeed: number;
-  speedOptions: readonly number[];
-  onSetDrawingSpeed: (speed: number) => void;
-  onRun: () => void;
-  onSavePng: () => void;
-  onReset: () => void;
-  onClear: () => void;
   onUpdateBlock: (blockId: string, patch: ProgramBlockPatch) => void;
 };
-
-type PanelColor = string;
 
 function getChallengeButtonLabel(challenge: Challenge) {
   const hasTravelSuffix = challenge.title.endsWith(' 여행');
@@ -56,10 +43,6 @@ function getBlockTitle(blockKind: ProgramBlock['kind']) {
   return '펜 색상';
 }
 
-function formatSpeed(speed: number) {
-  return `${speed}배`;
-}
-
 export function CommandPanel({
   blocks,
   challenges,
@@ -68,17 +51,8 @@ export function CommandPanel({
   onAddMove,
   onAddTurn,
   onAddRepeat,
-  onSetColor,
-  drawingSpeed,
-  speedOptions,
-  onSetDrawingSpeed,
-  onRun,
-  onSavePng,
-  onReset,
-  onClear,
   onUpdateBlock,
 }: CommandPanelProps) {
-  const [selectedColor, setSelectedColor] = useState<PanelColor>('#1f7a5c');
   const [newMoveDistance, setNewMoveDistance] = useState(80);
   const [newTurnDegrees, setNewTurnDegrees] = useState(90);
   const [newTurnDirection, setNewTurnDirection] = useState<'left' | 'right'>('right');
@@ -87,10 +61,6 @@ export function CommandPanel({
   const [newRepeatTurnDegrees, setNewRepeatTurnDegrees] = useState(120);
   const [newRepeatDirection, setNewRepeatDirection] = useState<'left' | 'right'>(
     'right',
-  );
-  const selectedSpeedIndex = Math.max(
-    0,
-    speedOptions.findIndex((speed) => speed === drawingSpeed),
   );
 
   const handleNumberPatch = (
@@ -114,11 +84,6 @@ export function CommandPanel({
   const parseNumberInput = (value: string, fallback: number) => {
     const parsed = Number(value);
     return Number.isFinite(parsed) ? parsed : fallback;
-  };
-
-  const handleColorChange = (color: string) => {
-    setSelectedColor(color);
-    onSetColor(color);
   };
 
   return (
@@ -458,67 +423,6 @@ export function CommandPanel({
         </div>
       </section>
 
-      <section className="panel-section">
-        <h2>그리기 속도</h2>
-        <label className="speed-control" htmlFor="drawing-speed">
-          <span>현재 속도</span>
-          <strong>{formatSpeed(drawingSpeed)}</strong>
-        </label>
-        <input
-          id="drawing-speed"
-          className="speed-slider"
-          type="range"
-          min={0}
-          max={speedOptions.length - 1}
-          step={1}
-          value={selectedSpeedIndex}
-          aria-label="그리기 속도"
-          aria-valuetext={formatSpeed(drawingSpeed)}
-          onChange={(event) =>
-            onSetDrawingSpeed(speedOptions[Number(event.currentTarget.value)])
-          }
-        />
-        <div className="speed-labels" aria-hidden="true">
-          {speedOptions.map((speed) => (
-            <span key={speed}>{formatSpeed(speed)}</span>
-          ))}
-        </div>
-      </section>
-
-      <section className="panel-section">
-        <h2>색상 지정</h2>
-        <label className="color-control" htmlFor="pen-color">
-          펜 색상
-          <input
-            id="pen-color"
-            type="color"
-            value={selectedColor}
-            onChange={(event) => handleColorChange(event.currentTarget.value)}
-          />
-        </label>
-      </section>
-
-      <section className="panel-section">
-        <h2>실행</h2>
-        <div className="action-row">
-          <button type="button" className="primary-action" onClick={onRun}>
-            <Play aria-hidden="true" />
-            실행
-          </button>
-          <button type="button" onClick={onSavePng}>
-            <Download aria-hidden="true" />
-            PNG 저장
-          </button>
-          <button type="button" onClick={onReset}>
-            <RotateCcw aria-hidden="true" />
-            초기화
-          </button>
-          <button type="button" className="secondary-action" onClick={onClear}>
-            <Trash2 aria-hidden="true" />
-            명령 삭제
-          </button>
-        </div>
-      </section>
     </section>
   );
 }

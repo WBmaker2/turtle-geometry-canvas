@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from 'react';
 
 import { TurtleCanvas } from './components/TurtleCanvas';
+import { CanvasControls } from './components/CanvasControls';
 import { CommandPanel } from './components/CommandPanel';
 import { LessonPanel } from './components/LessonPanel';
 import { ReflectionPanel } from './components/ReflectionPanel';
@@ -264,17 +265,6 @@ export default function App() {
         onAddMove={addMoveBlock}
         onAddTurn={addTurnBlock}
         onAddRepeat={addRepeatBlock}
-        onSetColor={applyColor}
-        drawingSpeed={drawingSpeed}
-        speedOptions={DRAWING_SPEEDS}
-        onSetDrawingSpeed={setDrawingSpeed}
-        onRun={() => setExecutedBlocks(cloneBlocks(blocks))}
-        onSavePng={saveCanvasAsPng}
-        onReset={() => setExecutedBlocks([])}
-        onClear={() => {
-          setBlocks([]);
-          setExecutedBlocks([]);
-        }}
         onUpdateBlock={updateBlock}
       />
 
@@ -285,6 +275,19 @@ export default function App() {
             turtle={programResult.finalState}
             animationSpeed={drawingSpeed}
             canvasRef={canvasRef}
+          />
+          <CanvasControls
+            drawingSpeed={drawingSpeed}
+            speedOptions={DRAWING_SPEEDS}
+            onSetDrawingSpeed={setDrawingSpeed}
+            onSetColor={applyColor}
+            onRun={() => setExecutedBlocks(cloneBlocks(blocks))}
+            onSavePng={saveCanvasAsPng}
+            onReset={() => setExecutedBlocks([])}
+            onClear={() => {
+              setBlocks([]);
+              setExecutedBlocks([]);
+            }}
           />
         </section>
 

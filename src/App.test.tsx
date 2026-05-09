@@ -59,6 +59,25 @@ describe('App', () => {
     expect(screen.getAllByText('8배').length).toBeGreaterThan(0);
   });
 
+  it('places speed, color, and run controls under the canvas', () => {
+    render(<App />);
+
+    const canvasStage = screen.getByRole('region', {
+      name: '거북이 그리기 캔버스',
+    });
+
+    expect(
+      within(canvasStage).getByRole('slider', { name: '그리기 속도' }),
+    ).toBeInTheDocument();
+    expect(within(canvasStage).getByLabelText('펜 색상')).toBeInTheDocument();
+    expect(
+      within(canvasStage).getByRole('button', { name: '실행' }),
+    ).toBeInTheDocument();
+    expect(
+      within(canvasStage).getByRole('button', { name: 'PNG 저장' }),
+    ).toBeInTheDocument();
+  });
+
   it('keeps previous result until run is clicked again after command edits', async () => {
     const user = userEvent.setup();
 

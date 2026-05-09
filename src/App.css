@@ -330,8 +330,47 @@ button svg {
 
 .canvas-stage {
   display: grid;
+  align-content: start;
   gap: 12px;
   min-height: 520px;
+}
+
+.canvas-controls {
+  display: grid;
+  grid-template-columns:
+    minmax(240px, 1.35fr) minmax(140px, 0.45fr)
+    minmax(260px, 1fr);
+  gap: 14px;
+  align-items: start;
+  border: 1px solid #b9d1ca;
+  border-radius: 8px;
+  background: #fbfefe;
+  padding: 14px;
+}
+
+.canvas-control-section {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-width: 0;
+}
+
+.canvas-control-section h2 {
+  margin: 0;
+  color: #27463e;
+  font-size: 0.95rem;
+}
+
+.canvas-controls .color-control {
+  margin-bottom: 0;
+}
+
+.canvas-control-section--actions .action-row {
+  grid-template-columns: repeat(2, minmax(120px, 1fr));
+}
+
+.canvas-control-section--actions button {
+  min-height: 44px;
 }
 
 .workspace {
@@ -448,6 +487,15 @@ button svg {
     max-height: 52vh;
   }
 
+  .canvas-controls {
+    grid-template-columns: 1fr;
+    padding: 12px;
+  }
+
+  .canvas-control-section--actions .action-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .button-row,
   .action-row {
     gap: 6px;
@@ -466,5 +514,21 @@ button svg {
   .builder-row input[type='number'],
   .builder-row select {
     width: 100%;
+  }
+}
+
+@media (min-width: 841px) and (max-width: 1180px) {
+  .canvas-controls {
+    grid-template-columns: minmax(220px, 1fr) minmax(140px, 0.55fr);
+  }
+
+  .canvas-control-section--actions {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 520px) {
+  .canvas-control-section--actions .action-row {
+    grid-template-columns: 1fr;
   }
 }
