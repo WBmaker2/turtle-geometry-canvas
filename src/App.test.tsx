@@ -5,6 +5,14 @@ import { describe, expect, it } from 'vitest';
 import App from './App';
 
 describe('App', () => {
+  it('renders lesson and reflection panels for the current challenge', () => {
+    render(<App />);
+
+    expect(screen.getByRole('heading', { name: '오늘의 실험' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: '관찰 기록' })).toBeInTheDocument();
+    expect(screen.getByText(/거북이가 한 바퀴 360도를 나누어 돈다/)).toBeInTheDocument();
+  });
+
   it('loads the square challenge and runs geometry facts after execute', async () => {
     const user = userEvent.setup();
 

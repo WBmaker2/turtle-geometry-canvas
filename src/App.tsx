@@ -2,6 +2,8 @@ import { useMemo, useState } from 'react';
 
 import { TurtleCanvas } from './components/TurtleCanvas';
 import { CommandPanel } from './components/CommandPanel';
+import { LessonPanel } from './components/LessonPanel';
+import { ReflectionPanel } from './components/ReflectionPanel';
 import { expandBlocks } from './domain/blocks';
 import { getRegularPolygonFacts } from './domain/mathFacts';
 import { runTurtleProgram } from './domain/turtle';
@@ -15,10 +17,6 @@ function getInitialSquareChallenge(challenges: Challenge[]) {
 
 function cloneBlocks(blocks: ProgramBlock[]) {
   return blocks.map((block) => ({ ...block }));
-}
-
-function getChallengeTitle(challenge: Challenge) {
-  return challenge.title;
 }
 
 export default function App() {
@@ -103,21 +101,11 @@ export default function App() {
         </section>
 
         <section className="result-panel">
-          <h2>{getChallengeTitle(selectedChallenge)}</h2>
-          <p>{selectedChallenge.question}</p>
-
-          {regularFacts ? (
-            <dl className="math-facts" aria-label="정다각형 수학 공식">
-              <dt>외각</dt>
-              <dd>{`${regularFacts.exteriorAngle}도`}</dd>
-              <dt>내각</dt>
-              <dd>{`${regularFacts.interiorAngle}도`}</dd>
-              <dt>내각의 합</dt>
-              <dd>{`${regularFacts.interiorAngleSum}도`}</dd>
-            </dl>
-          ) : (
-            <p className="exploration-note">탐색 도전은 규칙을 바꿔 직접 관찰해 봅시다.</p>
-          )}
+          <LessonPanel challenge={selectedChallenge} facts={regularFacts} />
+          <ReflectionPanel
+            segmentCount={programResult.segments.length}
+            reflection={selectedChallenge.reflection}
+          />
 
           <div role="status" aria-live="polite" className="status">
             실행 결과: 선분 {programResult.segments.length}개

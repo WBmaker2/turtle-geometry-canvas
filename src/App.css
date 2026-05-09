@@ -148,6 +148,8 @@ button svg {
   background: #ffffff;
   border-radius: 8px;
   padding: 16px;
+  display: grid;
+  gap: 12px;
 }
 
 .result-panel h2 {
@@ -157,6 +159,14 @@ button svg {
 .result-panel p {
   margin: 0 0 8px;
   line-height: 1.45;
+}
+
+.lesson-panel,
+.reflection-panel {
+  border: 1px solid #d8e8e1;
+  background: #f8fcfa;
+  border-radius: 8px;
+  padding: 12px;
 }
 
 .math-facts {
