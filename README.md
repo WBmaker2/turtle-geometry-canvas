@@ -1,4 +1,11 @@
 # Turtle Geometry Canvas
+[![Deploy GitHub Pages](https://github.com/wbmaker2/turtle-geometry-canvas/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/wbmaker2/turtle-geometry-canvas/actions/workflows/deploy-pages.yml)
+
+## 배포 링크
+
+- **앱 주소**: https://wbmaker2.github.io/turtle-geometry-canvas/
+- **GitHub 저장소**: https://github.com/wbmaker2/turtle-geometry-canvas
+- **공개 QA 근거**: [docs/ops/2026-05-09-public-pages-qa.md](docs/ops/2026-05-09-public-pages-qa.md)
 
 Turtle Geometry Canvas는 5~6학년을 대상으로 정다각형의 외각·내각 개념을 체험형 블록 코딩으로 익히는 수학/실과 융합 수업용 웹앱입니다.  
 거북이에게 `앞으로 이동`, `회전`, `색상 변경` 명령을 조합하게 하여 도형을 직접 그리고, 실행 결과를 보며 각도와 규칙을 탐색합니다.
