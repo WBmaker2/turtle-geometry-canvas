@@ -51,11 +51,51 @@ describe('App', () => {
 
     expect(screen.getByRole('status')).toHaveTextContent('실행 결과: 선분 4개');
 
-    await user.click(screen.getByRole('button', { name: '앞으로 이동 추가' }));
+    await user.click(screen.getByRole('button', { name: '이동 추가' }));
     expect(screen.getByRole('status')).toHaveTextContent('실행 결과: 선분 4개');
 
     await user.click(screen.getByRole('button', { name: '실행' }));
     expect(screen.getByRole('status')).toHaveTextContent('실행 결과: 선분 5개');
+  });
+
+  it('starts free drawing and adds move and turn commands with custom values', async () => {
+    const user = userEvent.setup();
+
+    render(<App />);
+
+    await user.click(screen.getByRole('button', { name: '자유 도형 그리기' }));
+
+    expect(screen.getByText('명령이 없습니다.')).toBeInTheDocument();
+    expect(
+      screen.getByText(/이동거리와 회전각을 직접 정해 나만의 도형 명령/),
+    ).toBeInTheDocument();
+
+    const builder = screen.getByRole('group', { name: '새 명령 만들기' });
+    const moveDistanceInput = within(builder).getByRole('spinbutton', {
+      name: '이동거리',
+    });
+    fireEvent.change(moveDistanceInput, { target: { value: '120' } });
+    await user.click(within(builder).getByRole('button', { name: '이동 추가' }));
+
+    const turnDegreesInput = within(builder).getByRole('spinbutton', {
+      name: '회전 각도',
+    });
+    fireEvent.change(turnDegreesInput, { target: { value: '45' } });
+    await user.selectOptions(
+      within(builder).getByRole('combobox', { name: '방향' }),
+      'left',
+    );
+    await user.click(within(builder).getByRole('button', { name: '회전 추가' }));
+
+    const commandList = screen.getByRole('list', { name: '현재 블록 목록' });
+    expect(within(commandList).getByDisplayValue('120')).toBeInTheDocument();
+    expect(within(commandList).getByDisplayValue('45')).toBeInTheDocument();
+    expect(within(commandList).getByRole('combobox', { name: '방향' })).toHaveValue(
+      'left',
+    );
+
+    await user.click(screen.getByRole('button', { name: '실행' }));
+    expect(screen.getByRole('status')).toHaveTextContent('실행 결과: 선분 1개');
   });
 
   it('allows editing repeat polygon fields and updates drawing only after rerun', async () => {

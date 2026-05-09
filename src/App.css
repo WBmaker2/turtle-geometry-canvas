@@ -60,6 +60,11 @@
   margin-bottom: 8px;
 }
 
+.wide-action {
+  width: 100%;
+  margin-bottom: 8px;
+}
+
 button {
   border: 1px solid #b9d1ca;
   border-radius: 8px;
@@ -131,12 +136,44 @@ button svg {
 }
 
 .block-fields input[type='number'],
-.block-fields select {
+.block-fields select,
+.builder-row input[type='number'],
+.builder-row select {
   width: min(140px, 100%);
   border: 1px solid #b9d1ca;
   border-radius: 6px;
   padding: 5px 6px;
   min-height: 32px;
+}
+
+.command-builder {
+  display: grid;
+  gap: 8px;
+}
+
+.builder-row {
+  display: grid;
+  grid-template-columns: minmax(72px, auto) minmax(72px, 1fr);
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid #d9e8e2;
+  border-radius: 8px;
+  background: #fbfefe;
+}
+
+.builder-row--turn {
+  grid-template-columns: minmax(72px, auto) minmax(72px, 1fr);
+}
+
+.builder-row label {
+  color: #27463e;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.builder-row button {
+  grid-column: 1 / -1;
 }
 
 .command-row:last-child {
@@ -288,5 +325,17 @@ button svg {
   .action-row {
     gap: 6px;
     grid-template-columns: 1fr;
+  }
+
+  .builder-row,
+  .builder-row--turn {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .builder-row button,
+  .builder-row input[type='number'],
+  .builder-row select {
+    width: 100%;
   }
 }

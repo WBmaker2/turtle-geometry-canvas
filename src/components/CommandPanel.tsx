@@ -1,5 +1,13 @@
 import { useState } from 'react';
-import { Download, Palette, Play, RotateCcw, SquarePlus, Trash2 } from 'lucide-react';
+import {
+  Download,
+  MoveRight,
+  Palette,
+  PencilLine,
+  Play,
+  RotateCcw,
+  Trash2,
+} from 'lucide-react';
 
 import type { ProgramBlock, ProgramBlockPatch } from '../domain/blocks';
 import type { Challenge } from '../data/challenges';
@@ -8,8 +16,9 @@ type CommandPanelProps = {
   blocks: ProgramBlock[];
   challenges: Challenge[];
   onLoadChallenge: (challengeId: string) => void;
-  onAddMove: () => void;
-  onAddTurn: () => void;
+  onStartFreeDraw: () => void;
+  onAddMove: (distance: number) => void;
+  onAddTurn: (degrees: number, direction: 'left' | 'right') => void;
   onSetColor: (color: string) => void;
   onRun: () => void;
   onSavePng: () => void;
@@ -42,6 +51,7 @@ export function CommandPanel({
   blocks,
   challenges,
   onLoadChallenge,
+  onStartFreeDraw,
   onAddMove,
   onAddTurn,
   onSetColor,
@@ -52,6 +62,9 @@ export function CommandPanel({
   onUpdateBlock,
 }: CommandPanelProps) {
   const [selectedColor, setSelectedColor] = useState<PanelColor>('#1f7a5c');
+  const [newMoveDistance, setNewMoveDistance] = useState(80);
+  const [newTurnDegrees, setNewTurnDegrees] = useState(90);
+  const [newTurnDirection, setNewTurnDirection] = useState<'left' | 'right'>('right');
 
   const handleNumberPatch = (
     blockId: string,
@@ -71,6 +84,11 @@ export function CommandPanel({
     onUpdateBlock(blockId, { [key]: parsed } as ProgramBlockPatch);
   };
 
+  const parseNumberInput = (value: string, fallback: number) => {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : fallback;
+  };
+
   return (
     <section className="control-panel" aria-label="블록 코딩 명령 패널">
       <header className="panel-heading">
@@ -84,6 +102,14 @@ export function CommandPanel({
 
       <section className="panel-section">
         <h2>도전 불러오기</h2>
+        <button
+          type="button"
+          className="wide-action"
+          onClick={onStartFreeDraw}
+        >
+          <PencilLine aria-hidden="true" />
+          자유 도형 그리기
+        </button>
         <div className="button-row">
           {challenges.map((challenge) => (
             <button
@@ -250,15 +276,60 @@ export function CommandPanel({
 
       <section className="panel-section">
         <h2>명령 추가</h2>
-        <div className="button-row">
-          <button type="button" onClick={onAddMove}>
-            <SquarePlus aria-hidden="true" />
-            앞으로 이동 추가
-          </button>
-          <button type="button" onClick={onAddTurn}>
-            <RotateCcw aria-hidden="true" />
-            오른쪽 회전 추가
-          </button>
+        <div className="command-builder" role="group" aria-label="새 명령 만들기">
+          <div className="builder-row">
+            <label htmlFor="new-move-distance">이동거리</label>
+            <input
+              id="new-move-distance"
+              type="number"
+              min={1}
+              max={240}
+              value={newMoveDistance}
+              onChange={(event) =>
+                setNewMoveDistance(
+                  parseNumberInput(event.currentTarget.value, newMoveDistance),
+                )
+              }
+            />
+            <button type="button" onClick={() => onAddMove(newMoveDistance)}>
+              <MoveRight aria-hidden="true" />
+              이동 추가
+            </button>
+          </div>
+
+          <div className="builder-row builder-row--turn">
+            <label htmlFor="new-turn-degrees">회전 각도</label>
+            <input
+              id="new-turn-degrees"
+              type="number"
+              min={0}
+              max={360}
+              value={newTurnDegrees}
+              onChange={(event) =>
+                setNewTurnDegrees(
+                  parseNumberInput(event.currentTarget.value, newTurnDegrees),
+                )
+              }
+            />
+            <label htmlFor="new-turn-direction">방향</label>
+            <select
+              id="new-turn-direction"
+              value={newTurnDirection}
+              onChange={(event) =>
+                setNewTurnDirection(parseDirection(event.currentTarget.value))
+              }
+            >
+              <option value="left">왼쪽</option>
+              <option value="right">오른쪽</option>
+            </select>
+            <button
+              type="button"
+              onClick={() => onAddTurn(newTurnDegrees, newTurnDirection)}
+            >
+              <RotateCcw aria-hidden="true" />
+              회전 추가
+            </button>
+          </div>
         </div>
       </section>
 

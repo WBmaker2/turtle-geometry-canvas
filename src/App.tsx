@@ -24,6 +24,18 @@ function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
 }
 
+const freeDrawChallenge: Challenge = {
+  id: 'free-draw',
+  kind: 'exploration',
+  title: '자유 도형 그리기',
+  question:
+    '이동거리와 회전각을 직접 정해 나만의 도형 명령을 차례대로 만들어 봅시다.',
+  sidesLabel: '직접 설계',
+  blocks: [],
+  reflection:
+    '명령을 하나씩 추가하며 각도와 거리가 도형의 모양을 어떻게 바꾸는지 관찰합니다.',
+};
+
 export default function App() {
   const initialChallenge = getInitialSquareChallenge(challenges);
   const [selectedChallengeId, setSelectedChallengeId] = useState<string>(
@@ -35,7 +47,10 @@ export default function App() {
   const [executedBlocks, setExecutedBlocks] = useState<ProgramBlock[]>([]);
 
   const selectedChallenge = useMemo(
-    () => challenges.find(({ id }) => id === selectedChallengeId) ?? initialChallenge,
+    () =>
+      selectedChallengeId === freeDrawChallenge.id
+        ? freeDrawChallenge
+        : challenges.find(({ id }) => id === selectedChallengeId) ?? initialChallenge,
     [selectedChallengeId],
   );
 
@@ -58,21 +73,31 @@ export default function App() {
     setExecutedBlocks([]);
   };
 
-  const addMoveBlock = () => {
+  const startFreeDraw = () => {
+    setSelectedChallengeId(freeDrawChallenge.id);
+    setBlocks([]);
+    setExecutedBlocks([]);
+  };
+
+  const addMoveBlock = (distance: number) => {
     setBlocks((prev) => [
       ...prev,
-      { id: crypto.randomUUID(), kind: 'move', distance: 80 },
+      {
+        id: crypto.randomUUID(),
+        kind: 'move',
+        distance: clamp(Math.round(distance), 1, 240),
+      },
     ]);
   };
 
-  const addTurnBlock = () => {
+  const addTurnBlock = (degrees: number, direction: 'left' | 'right') => {
     setBlocks((prev) => [
       ...prev,
       {
         id: crypto.randomUUID(),
         kind: 'turn',
-        direction: 'right',
-        degrees: 90,
+        direction,
+        degrees: clamp(Math.round(degrees), 0, 360),
       },
     ]);
   };
@@ -196,6 +221,7 @@ export default function App() {
         blocks={blocks}
         challenges={challenges}
         onLoadChallenge={loadChallenge}
+        onStartFreeDraw={startFreeDraw}
         onAddMove={addMoveBlock}
         onAddTurn={addTurnBlock}
         onSetColor={applyColor}
