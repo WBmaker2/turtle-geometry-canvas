@@ -102,6 +102,25 @@ export default function App() {
     ]);
   };
 
+  const addRepeatBlock = (
+    times: number,
+    distance: number,
+    turnDegrees: number,
+    direction: 'left' | 'right',
+  ) => {
+    setBlocks((prev) => [
+      ...prev,
+      {
+        id: crypto.randomUUID(),
+        kind: 'repeatPolygon',
+        times: clamp(Math.round(times), 1, 24),
+        distance: clamp(Math.round(distance), 1, 240),
+        turnDegrees: clamp(Math.round(turnDegrees), 0, 360),
+        direction,
+      },
+    ]);
+  };
+
   const applyColor = (color: string) => {
     setBlocks((prev) => [...prev, { id: crypto.randomUUID(), kind: 'penColor', color }]);
   };
@@ -224,6 +243,7 @@ export default function App() {
         onStartFreeDraw={startFreeDraw}
         onAddMove={addMoveBlock}
         onAddTurn={addTurnBlock}
+        onAddRepeat={addRepeatBlock}
         onSetColor={applyColor}
         onRun={() => setExecutedBlocks(cloneBlocks(blocks))}
         onSavePng={saveCanvasAsPng}

@@ -131,6 +131,24 @@ button svg {
   flex-wrap: wrap;
 }
 
+.turn-field-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) minmax(120px, 1fr);
+  gap: 10px;
+  width: 100%;
+}
+
+.turn-field-row .block-fields {
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.turn-field-row .block-fields input[type='number'],
+.turn-field-row .block-fields select {
+  width: 100%;
+}
+
 .block-fields label {
   font-size: 0.85rem;
 }
@@ -144,6 +162,39 @@ button svg {
   border-radius: 6px;
   padding: 5px 6px;
   min-height: 32px;
+}
+
+.repeat-block {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+}
+
+.repeat-count-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.repeat-inner {
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+  border-left: 3px solid #9cc9bb;
+  border-radius: 6px;
+  background: #f4fbf8;
+}
+
+.repeat-inner-title {
+  margin: 0;
+  color: #2f5a50;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.repeat-step-grid {
+  display: grid;
+  gap: 8px;
 }
 
 .command-builder {
@@ -163,6 +214,12 @@ button svg {
 }
 
 .builder-row--turn {
+  grid-template-columns:
+    minmax(36px, auto) minmax(78px, 0.9fr)
+    minmax(72px, auto) minmax(72px, 1fr);
+}
+
+.builder-row--repeat {
   grid-template-columns: minmax(72px, auto) minmax(72px, 1fr);
 }
 
@@ -328,7 +385,9 @@ button svg {
   }
 
   .builder-row,
-  .builder-row--turn {
+  .builder-row--turn,
+  .builder-row--repeat,
+  .turn-field-row {
     grid-template-columns: 1fr;
     align-items: stretch;
   }

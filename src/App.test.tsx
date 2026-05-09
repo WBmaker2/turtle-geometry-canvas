@@ -71,21 +71,27 @@ describe('App', () => {
     ).toBeInTheDocument();
 
     const builder = screen.getByRole('group', { name: '새 명령 만들기' });
-    const moveDistanceInput = within(builder).getByRole('spinbutton', {
+    const moveBuilder = within(builder).getByRole('group', {
+      name: '이동 명령 만들기',
+    });
+    const turnBuilder = within(builder).getByRole('group', {
+      name: '회전 명령 만들기',
+    });
+    const moveDistanceInput = within(moveBuilder).getByRole('spinbutton', {
       name: '이동거리',
     });
     fireEvent.change(moveDistanceInput, { target: { value: '120' } });
-    await user.click(within(builder).getByRole('button', { name: '이동 추가' }));
+    await user.click(within(moveBuilder).getByRole('button', { name: '이동 추가' }));
 
-    const turnDegreesInput = within(builder).getByRole('spinbutton', {
+    const turnDegreesInput = within(turnBuilder).getByRole('spinbutton', {
       name: '회전 각도',
     });
     fireEvent.change(turnDegreesInput, { target: { value: '45' } });
     await user.selectOptions(
-      within(builder).getByRole('combobox', { name: '방향' }),
+      within(turnBuilder).getByRole('combobox', { name: '방향' }),
       'left',
     );
-    await user.click(within(builder).getByRole('button', { name: '회전 추가' }));
+    await user.click(within(turnBuilder).getByRole('button', { name: '회전 추가' }));
 
     const commandList = screen.getByRole('list', { name: '현재 블록 목록' });
     expect(within(commandList).getByDisplayValue('120')).toBeInTheDocument();
@@ -98,6 +104,53 @@ describe('App', () => {
     expect(screen.getByRole('status')).toHaveTextContent('실행 결과: 선분 1개');
   });
 
+  it('adds a repeat block that expands one move and turn command by count', async () => {
+    const user = userEvent.setup();
+
+    render(<App />);
+
+    await user.click(screen.getByRole('button', { name: '자유 도형 그리기' }));
+
+    const builder = screen.getByRole('group', { name: '새 명령 만들기' });
+    const repeatBuilder = within(builder).getByRole('group', {
+      name: '반복 명령 만들기',
+    });
+
+    fireEvent.change(
+      within(repeatBuilder).getByRole('spinbutton', { name: '반복 횟수' }),
+      { target: { value: '3' } },
+    );
+    fireEvent.change(
+      within(repeatBuilder).getByRole('spinbutton', { name: '이동거리' }),
+      { target: { value: '80' } },
+    );
+    await user.selectOptions(
+      within(repeatBuilder).getByRole('combobox', { name: '방향' }),
+      'right',
+    );
+    fireEvent.change(
+      within(repeatBuilder).getByRole('spinbutton', { name: '회전 각도' }),
+      { target: { value: '120' } },
+    );
+
+    await user.click(within(repeatBuilder).getByRole('button', { name: '반복 추가' }));
+
+    const commandList = screen.getByRole('list', { name: '현재 블록 목록' });
+    expect(within(commandList).getByText('반복 안의 명령')).toBeInTheDocument();
+    expect(
+      within(commandList).getByRole('spinbutton', { name: '반복 횟수' }),
+    ).toHaveValue(3);
+    expect(within(commandList).getByRole('spinbutton', { name: '이동 거리' })).toHaveValue(
+      80,
+    );
+    expect(
+      within(commandList).getByRole('spinbutton', { name: '회전 각도' }),
+    ).toHaveValue(120);
+
+    await user.click(screen.getByRole('button', { name: '실행' }));
+    expect(screen.getByRole('status')).toHaveTextContent('실행 결과: 선분 3개');
+  });
+
   it('allows editing repeat polygon fields and updates drawing only after rerun', async () => {
     const user = userEvent.setup();
 
@@ -108,7 +161,8 @@ describe('App', () => {
 
     expect(screen.getByRole('status')).toHaveTextContent('실행 결과: 선분 4개');
 
-    const repeatCountInput = screen.getByRole('spinbutton', {
+    const commandList = screen.getByRole('list', { name: '현재 블록 목록' });
+    const repeatCountInput = within(commandList).getByRole('spinbutton', {
       name: '반복 횟수',
     });
     fireEvent.change(repeatCountInput, { target: { value: '5' } });

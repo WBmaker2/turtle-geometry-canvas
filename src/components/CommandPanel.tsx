@@ -6,6 +6,7 @@ import {
   PencilLine,
   Play,
   RotateCcw,
+  Repeat,
   Trash2,
 } from 'lucide-react';
 
@@ -19,6 +20,12 @@ type CommandPanelProps = {
   onStartFreeDraw: () => void;
   onAddMove: (distance: number) => void;
   onAddTurn: (degrees: number, direction: 'left' | 'right') => void;
+  onAddRepeat: (
+    times: number,
+    distance: number,
+    turnDegrees: number,
+    direction: 'left' | 'right',
+  ) => void;
   onSetColor: (color: string) => void;
   onRun: () => void;
   onSavePng: () => void;
@@ -54,6 +61,7 @@ export function CommandPanel({
   onStartFreeDraw,
   onAddMove,
   onAddTurn,
+  onAddRepeat,
   onSetColor,
   onRun,
   onSavePng,
@@ -65,6 +73,12 @@ export function CommandPanel({
   const [newMoveDistance, setNewMoveDistance] = useState(80);
   const [newTurnDegrees, setNewTurnDegrees] = useState(90);
   const [newTurnDirection, setNewTurnDirection] = useState<'left' | 'right'>('right');
+  const [newRepeatTimes, setNewRepeatTimes] = useState(3);
+  const [newRepeatDistance, setNewRepeatDistance] = useState(80);
+  const [newRepeatTurnDegrees, setNewRepeatTurnDegrees] = useState(120);
+  const [newRepeatDirection, setNewRepeatDirection] = useState<'left' | 'right'>(
+    'right',
+  );
 
   const handleNumberPatch = (
     blockId: string,
@@ -148,7 +162,7 @@ export function CommandPanel({
               ) : null}
 
               {block.kind === 'turn' ? (
-                <>
+                <div className="turn-field-row">
                   <div className="block-fields">
                     <label htmlFor={`${block.id}-direction`}>방향</label>
                     <select
@@ -181,78 +195,90 @@ export function CommandPanel({
                       }
                     />
                   </div>
-                </>
+                </div>
               ) : null}
 
               {block.kind === 'repeatPolygon' ? (
-                <>
-                  <div className="block-fields">
-                    <label htmlFor={`${block.id}-times`}>반복 횟수</label>
-                    <input
-                      id={`${block.id}-times`}
-                      type="number"
-                      min={1}
-                      max={24}
-                      value={block.times}
-                      onChange={(event) =>
-                        handleNumberPatch(
-                          block.id,
-                          'times',
-                          event.currentTarget.value,
-                        )
-                      }
-                    />
+                <div className="repeat-block">
+                  <div className="repeat-count-row">
+                    <div className="block-fields">
+                      <label htmlFor={`${block.id}-times`}>반복 횟수</label>
+                      <input
+                        id={`${block.id}-times`}
+                        type="number"
+                        min={1}
+                        max={24}
+                        value={block.times}
+                        onChange={(event) =>
+                          handleNumberPatch(
+                            block.id,
+                            'times',
+                            event.currentTarget.value,
+                          )
+                        }
+                      />
+                    </div>
                   </div>
-                  <div className="block-fields">
-                    <label htmlFor={`${block.id}-distance`}>이동 거리</label>
-                    <input
-                      id={`${block.id}-distance`}
-                      type="number"
-                      min={1}
-                      max={240}
-                      value={block.distance}
-                      onChange={(event) =>
-                        handleNumberPatch(
-                          block.id,
-                          'distance',
-                          event.currentTarget.value,
-                        )
-                      }
-                    />
+
+                  <div className="repeat-inner">
+                    <p className="repeat-inner-title">반복 안의 명령</p>
+                    <div className="repeat-step-grid">
+                      <div className="block-fields">
+                        <label htmlFor={`${block.id}-distance`}>이동 거리</label>
+                        <input
+                          id={`${block.id}-distance`}
+                          type="number"
+                          min={1}
+                          max={240}
+                          value={block.distance}
+                          onChange={(event) =>
+                            handleNumberPatch(
+                              block.id,
+                              'distance',
+                              event.currentTarget.value,
+                            )
+                          }
+                        />
+                      </div>
+                      <div className="turn-field-row">
+                        <div className="block-fields">
+                          <label htmlFor={`${block.id}-direction`}>방향</label>
+                          <select
+                            id={`${block.id}-direction`}
+                            value={block.direction}
+                            onChange={(event) =>
+                              onUpdateBlock(block.id, {
+                                direction: parseDirection(event.currentTarget.value),
+                              })
+                            }
+                          >
+                            <option value="left">왼쪽</option>
+                            <option value="right">오른쪽</option>
+                          </select>
+                        </div>
+                        <div className="block-fields">
+                          <label htmlFor={`${block.id}-turn-degrees`}>
+                            회전 각도
+                          </label>
+                          <input
+                            id={`${block.id}-turn-degrees`}
+                            type="number"
+                            min={0}
+                            max={360}
+                            value={block.turnDegrees}
+                            onChange={(event) =>
+                              handleNumberPatch(
+                                block.id,
+                                'turnDegrees',
+                                event.currentTarget.value,
+                              )
+                            }
+                          />
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div className="block-fields">
-                    <label htmlFor={`${block.id}-turn-degrees`}>회전 각도</label>
-                    <input
-                      id={`${block.id}-turn-degrees`}
-                      type="number"
-                      min={0}
-                      max={360}
-                      value={block.turnDegrees}
-                      onChange={(event) =>
-                        handleNumberPatch(
-                          block.id,
-                          'turnDegrees',
-                          event.currentTarget.value,
-                        )
-                      }
-                    />
-                  </div>
-                  <div className="block-fields">
-                    <label htmlFor={`${block.id}-direction`}>방향</label>
-                    <select
-                      id={`${block.id}-direction`}
-                      value={block.direction}
-                      onChange={(event) =>
-                        onUpdateBlock(block.id, {
-                          direction: parseDirection(event.currentTarget.value),
-                        })
-                      }
-                    >
-                      <option value="left">왼쪽</option>
-                      <option value="right">오른쪽</option>
-                    </select>
-                  </div>
-                </>
+                </div>
               ) : null}
 
               {block.kind === 'penColor' ? (
@@ -277,7 +303,7 @@ export function CommandPanel({
       <section className="panel-section">
         <h2>명령 추가</h2>
         <div className="command-builder" role="group" aria-label="새 명령 만들기">
-          <div className="builder-row">
+          <div className="builder-row" role="group" aria-label="이동 명령 만들기">
             <label htmlFor="new-move-distance">이동거리</label>
             <input
               id="new-move-distance"
@@ -297,7 +323,22 @@ export function CommandPanel({
             </button>
           </div>
 
-          <div className="builder-row builder-row--turn">
+          <div
+            className="builder-row builder-row--turn"
+            role="group"
+            aria-label="회전 명령 만들기"
+          >
+            <label htmlFor="new-turn-direction">방향</label>
+            <select
+              id="new-turn-direction"
+              value={newTurnDirection}
+              onChange={(event) =>
+                setNewTurnDirection(parseDirection(event.currentTarget.value))
+              }
+            >
+              <option value="left">왼쪽</option>
+              <option value="right">오른쪽</option>
+            </select>
             <label htmlFor="new-turn-degrees">회전 각도</label>
             <input
               id="new-turn-degrees"
@@ -311,23 +352,86 @@ export function CommandPanel({
                 )
               }
             />
-            <label htmlFor="new-turn-direction">방향</label>
-            <select
-              id="new-turn-direction"
-              value={newTurnDirection}
-              onChange={(event) =>
-                setNewTurnDirection(parseDirection(event.currentTarget.value))
-              }
-            >
-              <option value="left">왼쪽</option>
-              <option value="right">오른쪽</option>
-            </select>
             <button
               type="button"
               onClick={() => onAddTurn(newTurnDegrees, newTurnDirection)}
             >
               <RotateCcw aria-hidden="true" />
               회전 추가
+            </button>
+          </div>
+
+          <div
+            className="builder-row builder-row--repeat"
+            role="group"
+            aria-label="반복 명령 만들기"
+          >
+            <label htmlFor="new-repeat-times">반복 횟수</label>
+            <input
+              id="new-repeat-times"
+              type="number"
+              min={1}
+              max={24}
+              value={newRepeatTimes}
+              onChange={(event) =>
+                setNewRepeatTimes(
+                  parseNumberInput(event.currentTarget.value, newRepeatTimes),
+                )
+              }
+            />
+            <label htmlFor="new-repeat-distance">이동거리</label>
+            <input
+              id="new-repeat-distance"
+              type="number"
+              min={1}
+              max={240}
+              value={newRepeatDistance}
+              onChange={(event) =>
+                setNewRepeatDistance(
+                  parseNumberInput(event.currentTarget.value, newRepeatDistance),
+                )
+              }
+            />
+            <label htmlFor="new-repeat-direction">방향</label>
+            <select
+              id="new-repeat-direction"
+              value={newRepeatDirection}
+              onChange={(event) =>
+                setNewRepeatDirection(parseDirection(event.currentTarget.value))
+              }
+            >
+              <option value="left">왼쪽</option>
+              <option value="right">오른쪽</option>
+            </select>
+            <label htmlFor="new-repeat-turn-degrees">회전 각도</label>
+            <input
+              id="new-repeat-turn-degrees"
+              type="number"
+              min={0}
+              max={360}
+              value={newRepeatTurnDegrees}
+              onChange={(event) =>
+                setNewRepeatTurnDegrees(
+                  parseNumberInput(
+                    event.currentTarget.value,
+                    newRepeatTurnDegrees,
+                  ),
+                )
+              }
+            />
+            <button
+              type="button"
+              onClick={() =>
+                onAddRepeat(
+                  newRepeatTimes,
+                  newRepeatDistance,
+                  newRepeatTurnDegrees,
+                  newRepeatDirection,
+                )
+              }
+            >
+              <Repeat aria-hidden="true" />
+              반복 추가
             </button>
           </div>
         </div>
