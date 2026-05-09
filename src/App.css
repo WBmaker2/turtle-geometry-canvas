@@ -106,6 +106,39 @@ button svg {
   align-items: center;
 }
 
+.command-row--editable {
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.block-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin: 0;
+  color: #264e45;
+}
+
+.block-fields {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.block-fields label {
+  font-size: 0.85rem;
+}
+
+.block-fields input[type='number'],
+.block-fields select {
+  width: min(140px, 100%);
+  border: 1px solid #b9d1ca;
+  border-radius: 6px;
+  padding: 5px 6px;
+  min-height: 32px;
+}
+
 .command-row:last-child {
   border-bottom: 0;
 }

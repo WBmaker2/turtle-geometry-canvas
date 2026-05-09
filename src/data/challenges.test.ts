@@ -17,8 +17,16 @@ function isRegularChallenge(
 describe('challenges data model consistency', () => {
   it('regular challenges expose numeric sides and matching repeat block', () => {
     const regularChallenges = challenges.filter(isRegularChallenge);
+    const regularIds = regularChallenges.map((challenge) => challenge.id).sort();
 
-    expect(regularChallenges.length).toBe(3);
+    expect(regularChallenges).toHaveLength(5);
+    expect(regularIds).toEqual([
+      'hexagon',
+      'octagon',
+      'pentagon',
+      'square',
+      'triangle',
+    ]);
 
     for (const challenge of regularChallenges) {
       expect(Number.isInteger(challenge.sides)).toBe(true);
@@ -50,10 +58,16 @@ describe('challenges data model consistency', () => {
 
   it('contains exploration challenge that is not regular polygon math', () => {
     const exploration = challenges.find((challenge) => challenge.kind === 'exploration');
+    const explorationIds = challenges
+      .filter((challenge) => challenge.kind === 'exploration')
+      .map((challenge) => challenge.id);
 
     expect(exploration).toBeDefined();
     expect(exploration).toHaveProperty('kind', 'exploration');
     expect(exploration).not.toHaveProperty('sides');
+    expect(explorationIds).toContain('flower');
+    expect(explorationIds).toContain('spiral');
+    expect(explorationIds).toContain('star');
 
     expect(() => getRegularPolygonFacts((exploration as any).sides)).toThrowError(
       '정다각형의 변의 수는 3 이상의 정수여야 합니다.',

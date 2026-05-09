@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Palette, Play, RotateCcw, SquarePlus, Trash2 } from 'lucide-react';
+import { Download, Palette, Play, RotateCcw, SquarePlus, Trash2 } from 'lucide-react';
 
-import type { ProgramBlock } from '../domain/blocks';
+import type { ProgramBlock, ProgramBlockPatch } from '../domain/blocks';
 import type { Challenge } from '../data/challenges';
 
 type CommandPanelProps = {
@@ -12,8 +12,10 @@ type CommandPanelProps = {
   onAddTurn: () => void;
   onSetColor: (color: string) => void;
   onRun: () => void;
+  onSavePng: () => void;
   onReset: () => void;
   onClear: () => void;
+  onUpdateBlock: (blockId: string, patch: ProgramBlockPatch) => void;
 };
 
 type PanelColor = string;
@@ -25,21 +27,15 @@ function getChallengeButtonLabel(challenge: Challenge) {
   return `${baseTitle} 불러오기`;
 }
 
-function getBlockLabel(block: ProgramBlock) {
-  if (block.kind === 'move') {
-    return `앞으로 ${block.distance}px 이동`;
-  }
+function parseDirection(value: string): 'left' | 'right' {
+  return value === 'left' ? 'left' : 'right';
+}
 
-  if (block.kind === 'turn') {
-    const direction = block.direction === 'left' ? '왼쪽' : '오른쪽';
-    return `${direction} ${block.degrees}도 회전`;
-  }
-
-  if (block.kind === 'penColor') {
-    return `펜 색상 ${block.color}`;
-  }
-
-  return `${block.times}번 반복: 앞으로 ${block.distance}px, ${block.turnDegrees}도 회전`;
+function getBlockTitle(blockKind: ProgramBlock['kind']) {
+  if (blockKind === 'move') return '앞으로 이동';
+  if (blockKind === 'turn') return '회전';
+  if (blockKind === 'repeatPolygon') return '반복';
+  return '펜 색상';
 }
 
 export function CommandPanel({
@@ -50,10 +46,30 @@ export function CommandPanel({
   onAddTurn,
   onSetColor,
   onRun,
+  onSavePng,
   onReset,
   onClear,
+  onUpdateBlock,
 }: CommandPanelProps) {
   const [selectedColor, setSelectedColor] = useState<PanelColor>('#1f7a5c');
+
+  const handleNumberPatch = (
+    blockId: string,
+    key: 'distance' | 'degrees' | 'times' | 'turnDegrees',
+    value: string,
+  ) => {
+    const trimmed = value.trim();
+    if (trimmed === '') {
+      return;
+    }
+
+    const parsed = Number(trimmed);
+    if (Number.isNaN(parsed)) {
+      return;
+    }
+
+    onUpdateBlock(blockId, { [key]: parsed } as ProgramBlockPatch);
+  };
 
   return (
     <section className="control-panel" aria-label="블록 코딩 명령 패널">
@@ -85,8 +101,147 @@ export function CommandPanel({
         <h2>현재 명령</h2>
         <ul className="command-list" aria-label="현재 블록 목록">
           {blocks.map((block) => (
-            <li key={block.id} className="command-row">
-              {getBlockLabel(block)}
+            <li key={block.id} className="command-row command-row--editable">
+              <p className="block-title" aria-label={`${getBlockTitle(block.kind)} 블록`}>
+                {getBlockTitle(block.kind)}
+              </p>
+              {block.kind === 'move' ? (
+                <div className="block-fields">
+                  <label htmlFor={`${block.id}-distance`}>이동 거리</label>
+                  <input
+                    id={`${block.id}-distance`}
+                    type="number"
+                    min={1}
+                    max={240}
+                    value={block.distance}
+                    onChange={(event) =>
+                      handleNumberPatch(block.id, 'distance', event.currentTarget.value)
+                    }
+                  />
+                </div>
+              ) : null}
+
+              {block.kind === 'turn' ? (
+                <>
+                  <div className="block-fields">
+                    <label htmlFor={`${block.id}-direction`}>방향</label>
+                    <select
+                      id={`${block.id}-direction`}
+                      value={block.direction}
+                      onChange={(event) =>
+                        onUpdateBlock(block.id, {
+                          direction: parseDirection(event.currentTarget.value),
+                        })
+                      }
+                    >
+                      <option value="left">왼쪽</option>
+                      <option value="right">오른쪽</option>
+                    </select>
+                  </div>
+                  <div className="block-fields">
+                    <label htmlFor={`${block.id}-degrees`}>회전 각도</label>
+                    <input
+                      id={`${block.id}-degrees`}
+                      type="number"
+                      min={0}
+                      max={360}
+                      value={block.degrees}
+                      onChange={(event) =>
+                        handleNumberPatch(
+                          block.id,
+                          'degrees',
+                          event.currentTarget.value,
+                        )
+                      }
+                    />
+                  </div>
+                </>
+              ) : null}
+
+              {block.kind === 'repeatPolygon' ? (
+                <>
+                  <div className="block-fields">
+                    <label htmlFor={`${block.id}-times`}>반복 횟수</label>
+                    <input
+                      id={`${block.id}-times`}
+                      type="number"
+                      min={1}
+                      max={24}
+                      value={block.times}
+                      onChange={(event) =>
+                        handleNumberPatch(
+                          block.id,
+                          'times',
+                          event.currentTarget.value,
+                        )
+                      }
+                    />
+                  </div>
+                  <div className="block-fields">
+                    <label htmlFor={`${block.id}-distance`}>이동 거리</label>
+                    <input
+                      id={`${block.id}-distance`}
+                      type="number"
+                      min={1}
+                      max={240}
+                      value={block.distance}
+                      onChange={(event) =>
+                        handleNumberPatch(
+                          block.id,
+                          'distance',
+                          event.currentTarget.value,
+                        )
+                      }
+                    />
+                  </div>
+                  <div className="block-fields">
+                    <label htmlFor={`${block.id}-turn-degrees`}>회전 각도</label>
+                    <input
+                      id={`${block.id}-turn-degrees`}
+                      type="number"
+                      min={0}
+                      max={360}
+                      value={block.turnDegrees}
+                      onChange={(event) =>
+                        handleNumberPatch(
+                          block.id,
+                          'turnDegrees',
+                          event.currentTarget.value,
+                        )
+                      }
+                    />
+                  </div>
+                  <div className="block-fields">
+                    <label htmlFor={`${block.id}-direction`}>방향</label>
+                    <select
+                      id={`${block.id}-direction`}
+                      value={block.direction}
+                      onChange={(event) =>
+                        onUpdateBlock(block.id, {
+                          direction: parseDirection(event.currentTarget.value),
+                        })
+                      }
+                    >
+                      <option value="left">왼쪽</option>
+                      <option value="right">오른쪽</option>
+                    </select>
+                  </div>
+                </>
+              ) : null}
+
+              {block.kind === 'penColor' ? (
+                <div className="block-fields">
+                  <label htmlFor={`${block.id}-color`}>펜 색상</label>
+                  <input
+                    id={`${block.id}-color`}
+                    type="color"
+                    value={block.color}
+                    onChange={(event) =>
+                      onUpdateBlock(block.id, { color: event.currentTarget.value })
+                    }
+                  />
+                </div>
+              ) : null}
             </li>
           ))}
           {blocks.length === 0 && <li className="command-row empty">명령이 없습니다.</li>}
@@ -136,6 +291,10 @@ export function CommandPanel({
           <button type="button" className="primary-action" onClick={onRun}>
             <Play aria-hidden="true" />
             실행
+          </button>
+          <button type="button" onClick={onSavePng}>
+            <Download aria-hidden="true" />
+            PNG 저장
           </button>
           <button type="button" onClick={onReset}>
             <RotateCcw aria-hidden="true" />

@@ -1,5 +1,10 @@
 import type { TurtleCommand, TurnDirection } from './turtle';
 
+type MoveBlock = Extract<ProgramBlock, { kind: 'move' }>;
+type TurnBlock = Extract<ProgramBlock, { kind: 'turn' }>;
+type PenColorBlock = Extract<ProgramBlock, { kind: 'penColor' }>;
+type RepeatPolygonBlock = Extract<ProgramBlock, { kind: 'repeatPolygon' }>;
+
 export type ProgramBlock =
   | {
       id: string;
@@ -25,6 +30,22 @@ export type ProgramBlock =
       turnDegrees: number;
       direction: TurnDirection;
     };
+
+export type ProgramBlockPatch =
+  | (Partial<Omit<MoveBlock, 'id' | 'kind'>> & {
+      kind?: 'move';
+    })
+  | (Partial<Omit<TurnBlock, 'id' | 'kind'>> & {
+      kind?: 'turn';
+    })
+  | (Partial<Omit<PenColorBlock, 'id' | 'kind'>> & {
+      kind?: 'penColor';
+    })
+  | (
+      Partial<Omit<RepeatPolygonBlock, 'id' | 'kind'>> & {
+        kind?: 'repeatPolygon';
+      }
+    );
 
 export function expandBlocks(blocks: ProgramBlock[]): TurtleCommand[] {
   return blocks.map((block) => {

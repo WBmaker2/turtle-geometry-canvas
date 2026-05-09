@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { type MutableRefObject, type Ref, useEffect, useRef } from 'react';
 
 import type { DrawSegment, TurtleState } from '../domain/turtle';
 
@@ -9,6 +9,7 @@ const GRID_SPACING = 20;
 type TurtleCanvasProps = {
   segments: DrawSegment[];
   turtle: TurtleState;
+  canvasRef?: Ref<HTMLCanvasElement>;
 };
 
 function toCanvasPoint(point: { x: number; y: number }) {
@@ -18,11 +19,27 @@ function toCanvasPoint(point: { x: number; y: number }) {
   };
 }
 
-export function TurtleCanvas({ segments, turtle }: TurtleCanvasProps) {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+export function TurtleCanvas({ segments, turtle, canvasRef }: TurtleCanvasProps) {
+  const internalCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const attachCanvasRef = (canvas: HTMLCanvasElement | null) => {
+    internalCanvasRef.current = canvas;
+
+    if (typeof canvasRef === 'function') {
+      canvasRef(canvas);
+      return;
+    }
+
+    if (!canvasRef) {
+      return;
+    }
+
+    if ('current' in canvasRef) {
+      (canvasRef as MutableRefObject<HTMLCanvasElement | null>).current = canvas;
+    }
+  };
 
   useEffect(() => {
-    const canvas = canvasRef.current;
+    const canvas = internalCanvasRef.current;
     if (!canvas) {
       return;
     }
@@ -90,7 +107,7 @@ export function TurtleCanvas({ segments, turtle }: TurtleCanvasProps) {
 
   return (
     <canvas
-      ref={canvasRef}
+      ref={attachCanvasRef}
       className="turtle-canvas"
       aria-label="거북이가 지나간 선이 그려지는 캔버스"
       data-testid="turtle-canvas"
