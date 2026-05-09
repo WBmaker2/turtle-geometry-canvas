@@ -49,6 +49,30 @@
   color: #27463e;
 }
 
+.command-section {
+  padding: 12px;
+  border: 1px solid #9ec8bc;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #f8fffb 0%, #edf8f3 100%);
+}
+
+.command-section h2 {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #12382f;
+  font-size: 1rem;
+}
+
+.command-section h2::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #1f7a5c;
+  box-shadow: 0 0 0 4px rgba(31, 122, 92, 0.14);
+}
+
 .button-row,
 .action-row {
   display: grid;
@@ -97,18 +121,22 @@ button svg {
   list-style: none;
   margin: 0;
   padding: 0;
-  border: 1px solid #d9e8e2;
-  border-radius: 8px;
-  background: #fbfefe;
+  display: grid;
+  gap: 10px;
 }
 
 .command-row {
-  border-bottom: 1px solid #deebe6;
-  padding: 8px 10px;
+  position: relative;
+  border: 2px solid #9ec8bc;
+  border-left: 8px solid #1f7a5c;
+  border-radius: 8px;
+  padding: 12px 14px;
   font-size: 0.95rem;
   min-height: 40px;
   display: flex;
   align-items: center;
+  background: #ffffff;
+  box-shadow: 0 4px 0 rgba(31, 122, 92, 0.12);
 }
 
 .command-row--editable {
@@ -117,8 +145,24 @@ button svg {
   gap: 8px;
 }
 
+.command-row--move {
+  border-left-color: #2f7dd1;
+}
+
+.command-row--turn,
+.command-row--repeatPolygon {
+  border-left-color: #c67813;
+}
+
+.command-row--penColor {
+  border-left-color: #6c4fb6;
+}
+
 .block-title {
-  font-size: 0.85rem;
+  width: 100%;
+  border-bottom: 1px solid #dcece6;
+  padding-bottom: 6px;
+  font-size: 0.9rem;
   font-weight: 700;
   margin: 0;
   color: #264e45;
@@ -261,11 +305,9 @@ button svg {
   text-align: center;
 }
 
-.command-row:last-child {
-  border-bottom: 0;
-}
-
 .command-row.empty {
+  border-left-color: #91a8a0;
+  box-shadow: none;
   color: #6d7f79;
 }
 

@@ -155,11 +155,14 @@ export function CommandPanel({
         </div>
       </section>
 
-      <section className="panel-section">
+      <section className="panel-section command-section">
         <h2>현재 명령</h2>
         <ul className="command-list" aria-label="현재 블록 목록">
           {blocks.map((block) => (
-            <li key={block.id} className="command-row command-row--editable">
+            <li
+              key={block.id}
+              className={`command-row command-row--editable command-row--${block.kind}`}
+            >
               <p className="block-title" aria-label={`${getBlockTitle(block.kind)} 블록`}>
                 {getBlockTitle(block.kind)}
               </p>
