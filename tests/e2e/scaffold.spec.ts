@@ -93,7 +93,6 @@ test('applies selected pen color before drawing the loaded challenge', async ({
   const canvas = page.getByTestId('turtle-canvas');
   await page.getByRole('button', { name: '정사각형 불러오기' }).click();
   await page.locator('#pen-color').fill('#d94f30');
-  await page.getByRole('button', { name: '색상 적용' }).click();
 
   const beforePixels = await countSegmentColorPixels(canvas, {
     r: 217,

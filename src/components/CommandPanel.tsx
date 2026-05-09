@@ -2,7 +2,6 @@ import { useState } from 'react';
 import {
   Download,
   MoveRight,
-  Palette,
   PencilLine,
   Play,
   RotateCcw,
@@ -115,6 +114,11 @@ export function CommandPanel({
   const parseNumberInput = (value: string, fallback: number) => {
     const parsed = Number(value);
     return Number.isFinite(parsed) ? parsed : fallback;
+  };
+
+  const handleColorChange = (color: string) => {
+    setSelectedColor(color);
+    onSetColor(color);
   };
 
   return (
@@ -486,19 +490,9 @@ export function CommandPanel({
             id="pen-color"
             type="color"
             value={selectedColor}
-            onChange={(event) => setSelectedColor(event.currentTarget.value)}
+            onChange={(event) => handleColorChange(event.currentTarget.value)}
           />
         </label>
-        <div className="action-row">
-          <button
-            type="button"
-            className="secondary-action"
-            onClick={() => onSetColor(selectedColor)}
-          >
-            <Palette aria-hidden="true" />
-            색상 적용
-          </button>
-        </div>
       </section>
 
       <section className="panel-section">

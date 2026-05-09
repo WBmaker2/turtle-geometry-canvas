@@ -25,9 +25,7 @@ describe('App', () => {
     expect(screen.getByLabelText('정다각형 수학 공식')).toHaveTextContent(/외각\s*90도/);
   });
 
-  it('places the color command before drawing commands when 색상 적용 is clicked', async () => {
-    const user = userEvent.setup();
-
+  it('places the color command before drawing commands when the pen color changes', () => {
     render(<App />);
 
     const commandList = screen.getByRole('list', { name: '현재 블록 목록' });
@@ -36,7 +34,6 @@ describe('App', () => {
     fireEvent.change(screen.getByLabelText('펜 색상'), {
       target: { value: '#d94f30' },
     });
-    await user.click(screen.getByRole('button', { name: '색상 적용' }));
     const after = commandList.querySelectorAll('li').length;
 
     expect(after).toBe(before + 1);
@@ -46,6 +43,7 @@ describe('App', () => {
 
     const colorInput = within(commandList).getByDisplayValue('#d94f30');
     expect(colorInput).toHaveAttribute('type', 'color');
+    expect(screen.queryByRole('button', { name: '색상 적용' })).not.toBeInTheDocument();
   });
 
   it('lets students choose one of the fixed drawing speeds', () => {
