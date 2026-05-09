@@ -29,16 +29,14 @@ export default function App() {
   const [blocks, setBlocks] = useState<ProgramBlock[]>(
     cloneBlocks(initialChallenge.blocks),
   );
-  const [hasRun, setHasRun] = useState<boolean>(false);
+  const [executedBlocks, setExecutedBlocks] = useState<ProgramBlock[]>([]);
 
   const selectedChallenge = useMemo(
     () => challenges.find(({ id }) => id === selectedChallengeId) ?? initialChallenge,
     [selectedChallengeId],
   );
 
-  const programResult = hasRun
-    ? runTurtleProgram(expandBlocks(blocks))
-    : runTurtleProgram([]);
+  const programResult = runTurtleProgram(expandBlocks(executedBlocks));
 
   const regularFacts =
     selectedChallenge.kind === 'regular'
@@ -53,7 +51,7 @@ export default function App() {
 
     setSelectedChallengeId(challenge.id);
     setBlocks(cloneBlocks(challenge.blocks));
-    setHasRun(false);
+    setExecutedBlocks([]);
   };
 
   const addMoveBlock = () => {
@@ -88,11 +86,11 @@ export default function App() {
         onAddMove={addMoveBlock}
         onAddTurn={addTurnBlock}
         onSetColor={applyColor}
-        onRun={() => setHasRun(true)}
-        onReset={() => setHasRun(false)}
+        onRun={() => setExecutedBlocks(cloneBlocks(blocks))}
+        onReset={() => setExecutedBlocks([])}
         onClear={() => {
           setBlocks([]);
-          setHasRun(false);
+          setExecutedBlocks([]);
         }}
       />
 

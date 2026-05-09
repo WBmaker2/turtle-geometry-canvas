@@ -1,31 +1,13 @@
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { TurtleCanvas } from './TurtleCanvas';
 import type { DrawSegment, TurtleState } from '../domain/turtle';
+import { getMockCanvasContext } from '../test/setup';
 
 describe('TurtleCanvas', () => {
   it('draws canvas with grid, segment path, and turtle state', () => {
-    const contextMock = {
-      setTransform: vi.fn(),
-      fillRect: vi.fn(),
-      beginPath: vi.fn(),
-      moveTo: vi.fn(),
-      lineTo: vi.fn(),
-      stroke: vi.fn(),
-      save: vi.fn(),
-      translate: vi.fn(),
-      rotate: vi.fn(),
-      closePath: vi.fn(),
-      fill: vi.fn(),
-      clearRect: vi.fn(),
-      rect: vi.fn(),
-      restore: vi.fn(),
-    };
-
-    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(
-      contextMock as unknown as CanvasRenderingContext2D,
-    );
+    const contextMock = getMockCanvasContext();
 
     const segments: DrawSegment[] = [
       {
